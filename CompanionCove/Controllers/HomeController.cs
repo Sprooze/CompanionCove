@@ -1,4 +1,5 @@
-﻿using CompanionCove.Models;
+﻿using CompanionCove.Core.Models.Home;
+using CompanionCove.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -15,7 +16,9 @@ namespace CompanionCove.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var model = new IndexViewModel();
+
+            return View(model);
         }
 
       

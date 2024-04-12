@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CompanionCove.Infrastructure\CompanionCove.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

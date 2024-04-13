@@ -10,9 +10,4 @@
     <ProjectReference Include="..\CompanionCove.Infrastructure\CompanionCove.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Contracts\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
 </Project>

@@ -38,11 +38,11 @@ namespace CompanionCove.Controllers
 			}
 			if (ModelState.IsValid == false)
 			{
-				return View(model);
+				return  View(model);
 			}
 
 			await agentService.CreateAsync(User.Id(), model.PhoneNumber);
-			return RedirectToAction(nameof(AnimalController.All), "Animal");
+			return  RedirectToAction(nameof(AnimalController.All), "Animal");
 		}
 	}
 }

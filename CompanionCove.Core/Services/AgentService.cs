@@ -29,7 +29,13 @@ namespace CompanionCove.Core.Services
 			return await repository.AllReadOnly<Agent>().AnyAsync(x=>x.UserId == userid);
 		}
 
-		public async Task<bool> UserIsAGuardianAsync(string useriId)
+        public async Task<int?> GetAgentIdAsync(string userId)
+        {
+           return (await repository.AllReadOnly<Agent>()
+				.FirstOrDefaultAsync(x=>x.UserId == userId))?.Id;
+        }
+
+        public async Task<bool> UserIsAGuardianAsync(string useriId)
 		{
 			return await repository.AllReadOnly<Animal>().AnyAsync(x => x.GuardianId == useriId);	
 		}

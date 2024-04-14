@@ -1,13 +1,19 @@
-﻿using CompanionCove.Core.Models.Agent;
+﻿using CompanionCove.Core.Contracts;
+using CompanionCove.Core.Models.Agent;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompanionCove.Controllers
 {
-	[Authorize]
-	public class AgentController : Controller
+	public class AgentController : BaseController
 	{
-		[HttpGet]
+		private readonly IAgentService agentService;
+
+        public AgentController(IAgentService _agentService)
+        {
+				agentService = _agentService;
+        }
+        [HttpGet]
 		public async Task<IActionResult> Become()
 		{
 			var model = new BecomeAgentFormModel();

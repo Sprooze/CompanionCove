@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompanionCove.Controllers
 {
-    [Authorize]
-    public class AnimalController : Controller
+    
+    public class AnimalController : BaseController
     {
         [AllowAnonymous]
 		[HttpGet]

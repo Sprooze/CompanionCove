@@ -14,7 +14,7 @@ namespace CompanionCove.Core.Services
         {
             repository = _repository;
         }
-        public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimals()
+        public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimalsAsync()
         {
             return await repository
                  .AllReadOnly<Animal>()

@@ -4,6 +4,6 @@ namespace CompanionCove.Core.Contracts
 {
     public interface IAnimalService
     {
-        Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimals();
+        Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimalsAsync();
     }
 }

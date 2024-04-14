@@ -6,6 +6,7 @@ using static CompanionCove.Infrastructure.Constants.DataConstants;
 
 namespace CompanionCove.Infrastructure.Data.Models
 {
+    [Index(nameof(PhoneNumber),IsUnique = true)]
     [Comment("Adoption Agent")]
     public class Agent
     {

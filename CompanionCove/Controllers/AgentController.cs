@@ -1,5 +1,6 @@
 ﻿using CompanionCove.Core.Contracts;
 using CompanionCove.Core.Models.Agent;
+using CompanionCove.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,12 @@ namespace CompanionCove.Controllers
         [HttpGet]
 		public async Task<IActionResult> Become()
 		{
-			var model = new BecomeAgentFormModel();
+			if (await agentService.ExistsByIdAsync(User.Id()))
+			{
+				return BadRequest();
+			}
+			
+		var model = new BecomeAgentFormModel();
 
 			return View(model);
 		}

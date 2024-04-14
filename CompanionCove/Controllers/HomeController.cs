@@ -22,7 +22,7 @@ namespace CompanionCove.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var model = await animalService.LastThreeAnimals();
+            var model = await animalService.LastThreeAnimalsAsync();
 
             return View(model);
         }

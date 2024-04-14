@@ -1,6 +1,6 @@
 ﻿using CompanionCove.Core.Models.Home;
 
-namespace CompanionCove.Core.Contracts.Animal
+namespace CompanionCove.Core.Contracts
 {
     public interface IAnimalService
     {

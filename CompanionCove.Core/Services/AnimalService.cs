@@ -1,9 +1,10 @@
-﻿using CompanionCove.Core.Contracts.Animal;
+﻿using CompanionCove.Core.Contracts;
 using CompanionCove.Core.Models.Home;
 using CompanionCove.Infrastructure.Data.Common;
+using CompanionCove.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CompanionCove.Core.Services.Animal
+namespace CompanionCove.Core.Services
 {
     public class AnimalService : IAnimalService
     {
@@ -11,12 +12,12 @@ namespace CompanionCove.Core.Services.Animal
 
         public AnimalService(IRepository _repository)
         {
-          repository = _repository;
+            repository = _repository;
         }
         public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimals()
         {
             return await repository
-                 .AllReadOnly<Infrastructure.Data.Models.Animal>()
+                 .AllReadOnly<Animal>()
                  .OrderByDescending(x => x.Id)
                  .Take(3)
                  .Select(x => new AnimalIndexServiceModel()

@@ -1,4 +1,4 @@
-﻿using CompanionCove.Core.Contracts.Animal;
+﻿using CompanionCove.Core.Contracts;
 using CompanionCove.Core.Models.Home;
 using CompanionCove.Models;
 using Microsoft.AspNetCore.Mvc;

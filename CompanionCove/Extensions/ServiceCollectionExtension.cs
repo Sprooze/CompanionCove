@@ -1,5 +1,5 @@
-﻿using CompanionCove.Core.Contracts.Animal;
-using CompanionCove.Core.Services.Animal;
+﻿using CompanionCove.Core.Contracts;
+using CompanionCove.Core.Services;
 using CompanionCove.Infrastructure.Data;
 using CompanionCove.Infrastructure.Data.Common;
 using CompanionCove.Infrastructure.Data.Models;

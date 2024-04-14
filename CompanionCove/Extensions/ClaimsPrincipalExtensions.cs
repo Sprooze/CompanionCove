@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace CompanionCove.Extensions
+﻿namespace System.Security.Claims
 {
 	public static class ClaimsPrincipalExtensions
 	{

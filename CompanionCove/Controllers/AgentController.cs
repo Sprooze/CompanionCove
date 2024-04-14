@@ -1,8 +1,7 @@
 ﻿using CompanionCove.Core.Contracts;
 using CompanionCove.Core.Models.Agent;
-using CompanionCove.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CompanionCove.Controllers
 {

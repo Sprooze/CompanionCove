@@ -2,12 +2,6 @@
 using CompanionCove.Infrastructure.Data.Common;
 using CompanionCove.Infrastructure.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CompanionCove.Core.Services
 {
@@ -19,9 +13,15 @@ namespace CompanionCove.Core.Services
 			repository = _repository;		
         }
 
-		public Task CreateAsync(string userId, string phoneNumber)
+		public async Task CreateAsync(string userId, string phoneNumber)
 		{
-			throw new NotImplementedException();
+			await repository.AddAsync(new Agent()
+			{
+				UserId = userId,
+				PhoneNumber = phoneNumber,
+			});
+
+			await repository.SaveChangesAsync();
 		}
 
 		public async Task<bool> ExistsByIdAsync(string userid)
@@ -29,14 +29,14 @@ namespace CompanionCove.Core.Services
 			return await repository.AllReadOnly<Agent>().AnyAsync(x=>x.UserId == userid);
 		}
 
-		public Task<bool> UserIsAGuardianAsync()
+		public async Task<bool> UserIsAGuardianAsync(string useriId)
 		{
-			throw new NotImplementedException();
+			return await repository.AllReadOnly<Animal>().AnyAsync(x => x.GuardianId == useriId);	
 		}
 
-		public Task<bool> UserWithPhoneNumberExistsAsync(string phoneNumber)
+		public async Task<bool> UserWithPhoneNumberExistsAsync(string phoneNumber)
 		{
-			throw new NotImplementedException();
+			return await repository.AllReadOnly<Agent>().AnyAsync(x=>x.PhoneNumber == phoneNumber);
 		}
 	}
 }

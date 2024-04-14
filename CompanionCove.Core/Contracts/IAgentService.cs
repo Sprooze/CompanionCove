@@ -11,7 +11,7 @@ namespace CompanionCove.Core.Contracts
 		Task<bool> ExistsByIdAsync(string userid);
 		Task<bool> UserWithPhoneNumberExistsAsync(string phoneNumber);
 
-		Task<bool> UserIsAGuardianAsync();
+		Task<bool> UserIsAGuardianAsync(string userId);
 
 		Task CreateAsync(string userId, string phoneNumber);
 	}

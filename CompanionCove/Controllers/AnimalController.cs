@@ -20,11 +20,19 @@ namespace CompanionCove.Controllers
         }
         [AllowAnonymous]
 		[HttpGet]
-		public async Task<IActionResult> All()
+		public async Task<IActionResult> All([FromQuery]AllAnimalsQueryModel query)
         {
-            var model = new AllAnimalsQueryModel();
+            var model = await animalService.AllAsync(
+                query.Type,
+                query.SearchTerm,
+                query.Sorting,
+                query.CurrentPage,
+                query.AnimalsPerPage);
 
-            return View(model);
+            query.TotalAnimalsCount = model.TotalAnimalsCount;
+            query.Animals = model.Animals;
+            query.Types = await animalService.AllTypesNamesAsync();
+            return View(query);
         }
 		[HttpGet]
 		public async Task<IActionResult> Mine()
@@ -100,7 +108,7 @@ namespace CompanionCove.Controllers
 		}
 
         [HttpPost]
-        public async Task<IActionResult> Rent(int id)
+        public async Task<IActionResult> Adopt(int id)
         {
 			return RedirectToAction(nameof(Mine));
 		}

@@ -1,4 +1,5 @@
-﻿using CompanionCove.Core.Models.Animal;
+﻿using CompanionCove.Core.Enumerations;
+using CompanionCove.Core.Models.Animal;
 using CompanionCove.Core.Models.Home;
 
 namespace CompanionCove.Core.Contracts
@@ -12,5 +13,10 @@ namespace CompanionCove.Core.Contracts
         Task<bool> TypeExistsAsync(int typeId);
 
         Task<int> CreateAsync(AnimalFormModel model, int agentId);
+
+        Task<AnimalQueryServiceModel> AllAsync(string? type = null, string? searchTerm= null,
+            AnimalSorting sorting = AnimalSorting.Newest, int currentPage =1, int animalsPerPage = 1);
+
+        Task<IEnumerable<string>> AllTypesNamesAsync();
     }
 }

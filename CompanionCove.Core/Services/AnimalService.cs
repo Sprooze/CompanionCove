@@ -1,4 +1,5 @@
 ﻿using CompanionCove.Core.Contracts;
+using CompanionCove.Core.Enumerations;
 using CompanionCove.Core.Models.Animal;
 using CompanionCove.Core.Models.Home;
 using CompanionCove.Infrastructure.Data.Common;
@@ -16,6 +17,49 @@ namespace CompanionCove.Core.Services
             repository = _repository;
         }
 
+        public async Task<AnimalQueryServiceModel> AllAsync(string? type = null, string? searchTerm = null, AnimalSorting sorting = AnimalSorting.Newest, int currentPage = 1, int animalsPerPage = 1)
+        {
+            var animalsToShow = repository.AllReadOnly<Animal>();
+            
+            if(type != null)
+            {
+                animalsToShow = animalsToShow.Where(x => x.Type.Name == type);
+            }
+
+            if(searchTerm != null)
+            {
+                string normalizedSearchTerm = searchTerm.ToLower();
+                animalsToShow = animalsToShow.Where(x => (x.Name.ToLower().Contains(normalizedSearchTerm)
+                || x.Address.ToLower().Contains(normalizedSearchTerm)
+                || x.Description.ToLower().Contains(normalizedSearchTerm))); 
+            }
+
+            animalsToShow = sorting switch
+            {
+               AnimalSorting.NotAdoptedFirst => animalsToShow.OrderBy(x=> x.GuardianId!= null).ThenByDescending(x=>x.Id),
+                _ =>animalsToShow.OrderByDescending(x=>x.Id)
+            };
+
+            var animals = await animalsToShow.Skip((currentPage-1) * animalsPerPage).Take(animalsPerPage)
+                .Select(x=> new AnimalServiceModel()
+                {
+                    Id = x.Id,
+                    Address = x.Address,
+                    ImageUrl = x.ImageUrl,
+                    IsAdopted = x.GuardianId != null,
+                    Name = x.Name
+                })
+                .ToListAsync();
+
+            int totalAnimals = await animalsToShow.CountAsync();
+
+            return new AnimalQueryServiceModel()
+            {
+                Animals = animals,
+                TotalAnimalsCount = totalAnimals
+            };
+        }
+
         public async Task<IEnumerable<AnimalTypeServiceModel>> AllTypesAsync()
         {
             return await repository.AllReadOnly<Infrastructure.Data.Models.Type>().Select(x => new AnimalTypeServiceModel()
@@ -23,6 +67,11 @@ namespace CompanionCove.Core.Services
                 Id = x.Id,
                 Name = x.Name
             }).ToListAsync(); 
+        }
+
+        public async Task<IEnumerable<string>> AllTypesNamesAsync()
+        {
+            return await repository.AllReadOnly<Infrastructure.Data.Models.Type>().Select(x=>x.Name).Distinct().ToListAsync();
         }
 
         public async Task<int> CreateAsync(AnimalFormModel model, int agentId)

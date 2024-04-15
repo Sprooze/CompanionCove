@@ -17,6 +17,16 @@ namespace CompanionCove.Core.Services
             repository = _repository;
         }
 
+        public async Task<IEnumerable<AnimalServiceModel>> AllAnimalsByAgentIdAsync(int agentId)
+        {
+            return await repository.AllReadOnly<Animal>().Where(x => x.AgentId == agentId).ProjectAnimal().ToListAsync();
+        }
+
+        public async Task<IEnumerable<AnimalServiceModel>> AllAnimalsByUserId(string userId)
+        {
+            return await repository.AllReadOnly<Animal>().Where(x => x.GuardianId == userId).ProjectAnimal().ToListAsync();
+        }
+
         public async Task<AnimalQueryServiceModel> AllAsync(string? type = null, string? searchTerm = null, AnimalSorting sorting = AnimalSorting.Newest, int currentPage = 1, int animalsPerPage = 1)
         {
             var animalsToShow = repository.AllReadOnly<Animal>();
@@ -40,16 +50,7 @@ namespace CompanionCove.Core.Services
                 _ =>animalsToShow.OrderByDescending(x=>x.Id)
             };
 
-            var animals = await animalsToShow.Skip((currentPage-1) * animalsPerPage).Take(animalsPerPage)
-                .Select(x=> new AnimalServiceModel()
-                {
-                    Id = x.Id,
-                    Address = x.Address,
-                    ImageUrl = x.ImageUrl,
-                    IsAdopted = x.GuardianId != null,
-                    Name = x.Name
-                })
-                .ToListAsync();
+            var animals = await animalsToShow.Skip((currentPage-1) * animalsPerPage).Take(animalsPerPage).ProjectAnimal().ToListAsync();
 
             int totalAnimals = await animalsToShow.CountAsync();
 
@@ -74,7 +75,26 @@ namespace CompanionCove.Core.Services
             return await repository.AllReadOnly<Infrastructure.Data.Models.Type>().Select(x=>x.Name).Distinct().ToListAsync();
         }
 
-        public async Task<int> CreateAsync(AnimalFormModel model, int agentId)
+		public async Task<AnimalDetailsServiceModel> AnimalDetailsByIdAsync(int id)
+		{
+            return await repository.AllReadOnly<Animal>().Where(x => x.Id == id).Select(x => new AnimalDetailsServiceModel()
+            {
+                Id= x.Id,
+                Address = x.Address,
+                Agent = new Models.Agent.AgentServiceModel()
+                {
+                    Email = x.Agent.User.Email,
+                    PhoneNumber = x.Agent.PhoneNumber
+                },
+                Type = x.Type.Name,
+                Description = x.Description,
+                ImageUrl = x.ImageUrl,
+                IsAdopted = x.GuardianId !=null,
+                Name = x.Name
+            }).FirstAsync(); 
+		}
+
+		public async Task<int> CreateAsync(AnimalFormModel model, int agentId)
         {
             Animal animal = new Animal()
             {
@@ -91,7 +111,12 @@ namespace CompanionCove.Core.Services
             return animal.Id;
         }
 
-        public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimalsAsync()
+		public async Task<bool> ExistsAsync(int id)
+		{
+		   return await repository.AllReadOnly<Animal>().AnyAsync(x=>x.Id == id);
+		}
+
+		public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimalsAsync()
         {
             return await repository
                  .AllReadOnly<Animal>()
@@ -109,5 +134,7 @@ namespace CompanionCove.Core.Services
         {
             return await repository.AllReadOnly<Infrastructure.Data.Models.Type>().AnyAsync(x => x.Id == typeId);
         }
+
+       
     }
 }

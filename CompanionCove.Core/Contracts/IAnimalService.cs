@@ -18,5 +18,13 @@ namespace CompanionCove.Core.Contracts
             AnimalSorting sorting = AnimalSorting.Newest, int currentPage =1, int animalsPerPage = 1);
 
         Task<IEnumerable<string>> AllTypesNamesAsync();
+
+        Task<IEnumerable<AnimalServiceModel>> AllAnimalsByAgentIdAsync(int agentId);
+
+        Task<IEnumerable<AnimalServiceModel>> AllAnimalsByUserId(string userId);
+
+        Task<bool> ExistsAsync(int id);
+
+        Task<AnimalDetailsServiceModel> AnimalDetailsByIdAsync(int id);
     }
 }

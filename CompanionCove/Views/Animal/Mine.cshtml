@@ -1,4 +1,4 @@
-﻿@model AllAnimalsQueryModel
+﻿@model IEnumerable<AnimalServiceModel>
 @{
 	ViewData["Title"] = "My Animals";
 }
@@ -6,3 +6,15 @@
 
 <h2 class="text-center">@ViewData["Title"]</h2>
 <hr />
+
+@if(Model.Any() == false)
+{
+	<h3 class= "text-center">You have no animals yet!</h3>
+}
+
+<div class="row">
+	@foreach(var animal in Model)
+	{
+			<partial name ="_AnimalPartial" model="@animal"/>
+	}
+</div>

@@ -37,13 +37,27 @@ namespace CompanionCove.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Mine()
         {
-            var model = new AllAnimalsQueryModel();
+            var userId = User.Id();
+            IEnumerable<AnimalServiceModel> model;
+            if(await agentService.ExistsByIdAsync(userId))
+            {
+                var agentId = await agentService.GetAgentIdAsync(userId) ?? 0;
+                model = await animalService.AllAnimalsByAgentIdAsync(agentId);
+            }
+            else
+            {
+                model = await animalService.AllAnimalsByUserId(userId);
+            }
             return View(model);
         }
 		[HttpGet]
 		public async Task<IActionResult> Details(int id)
 		{
-			var model = new AnimalDetailsViewModel();
+            if(await animalService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+			var model = await animalService.AnimalDetailsByIdAsync(id);
 			return View(model);
 		}
 		[HttpGet]

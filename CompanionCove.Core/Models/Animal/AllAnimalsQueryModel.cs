@@ -9,7 +9,7 @@ namespace CompanionCove.Core.Models.Animal
 
         public string Type { get; init; } = null!;
 
-        [Display(Name = "Search by text")]
+        [Display(Name = "Search by term")]
 
         public string SearchTerm { get; init; } = null!;
 

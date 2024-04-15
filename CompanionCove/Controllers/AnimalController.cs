@@ -79,7 +79,7 @@ namespace CompanionCove.Controllers
         {
             if(await animalService.TypeExistsAsync(model.TypeId) == false)
             {
-                ModelState.AddModelError(nameof(model.TypeId), "");
+                ModelState.AddModelError(nameof(model.TypeId), "Type does not exist!");
             }
 
             if(ModelState.IsValid == false)
@@ -97,15 +97,47 @@ namespace CompanionCove.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
-            var model = new AnimalFormModel();
+           if(await animalService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
 
+           if(await animalService.HasAgentWithIdAsync(id,User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+            var model = await animalService.GetAnimalFormModelByIdAsync(id);
             return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id,AnimalFormModel model)
         {
-			return RedirectToAction(nameof(Details), new { id = 1 });
+            if (await animalService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+
+            if (await animalService.HasAgentWithIdAsync(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+
+            if (await animalService.TypeExistsAsync(model.TypeId) == false)
+            {
+                ModelState.AddModelError(nameof(model.TypeId), "Type does not exist!");
+            }
+
+            if (ModelState.IsValid == false)
+            {
+                model.Types = await animalService.AllTypesAsync();
+
+                return View(model);
+            }
+
+            await animalService.EditAsync(id, model);
+
+            return RedirectToAction(nameof(Details), new { id});
 		}
 		[HttpGet]
 		public async Task<IActionResult> Delete(int id)

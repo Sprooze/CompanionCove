@@ -27,7 +27,8 @@ namespace CompanionCove.Core.Services
             return await repository.AllReadOnly<Animal>().Where(x => x.GuardianId == userId).ProjectAnimal().ToListAsync();
         }
 
-        public async Task<AnimalQueryServiceModel> AllAsync(string? type = null, string? searchTerm = null, AnimalSorting sorting = AnimalSorting.Newest, int currentPage = 1, int animalsPerPage = 1)
+        public async Task<AnimalQueryServiceModel> AllAsync(string? type = null, string? searchTerm = null,
+            AnimalSorting sorting = AnimalSorting.Newest, int currentPage = 1, int animalsPerPage = 1)
         {
             var animalsToShow = repository.AllReadOnly<Animal>();
             
@@ -111,12 +112,54 @@ namespace CompanionCove.Core.Services
             return animal.Id;
         }
 
-		public async Task<bool> ExistsAsync(int id)
+        public async Task EditAsync(int animalId, AnimalFormModel model)
+        {
+            var animal = await repository.GetByIdAsync<Animal>(animalId);
+
+            if(animal != null)
+            {
+                animal.Address = model.Address;
+                animal.TypeId = model.TypeId;
+                animal.Description = model.Description;
+                animal.ImageUrl = model.ImageUrl; 
+                animal.Name = model.Name;
+
+                await repository.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> ExistsAsync(int id)
 		{
 		   return await repository.AllReadOnly<Animal>().AnyAsync(x=>x.Id == id);
 		}
 
-		public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimalsAsync()
+        public async Task<AnimalFormModel?> GetAnimalFormModelByIdAsync(int id)
+        {
+            var animal = await repository.AllReadOnly<Animal>().Where(x => x.Id == id).Select(x => new AnimalFormModel()
+            {
+                Address = x.Address,
+                TypeId = x.TypeId,
+                Description = x.Description,
+                ImageUrl = x.ImageUrl,
+                Name = x.Name
+
+            }).FirstOrDefaultAsync();
+
+            if(animal != null)
+            {
+                animal.Types = await AllTypesAsync();
+            }
+
+
+            return animal;
+        }
+
+        public async Task<bool> HasAgentWithIdAsync(int animalId, string userId)
+        {
+            return await repository.AllReadOnly<Animal>().AnyAsync(x => x.Id == animalId && x.Agent.UserId == userId);
+        }
+
+        public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimalsAsync()
         {
             return await repository
                  .AllReadOnly<Animal>()

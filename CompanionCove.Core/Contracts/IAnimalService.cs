@@ -26,5 +26,11 @@ namespace CompanionCove.Core.Contracts
         Task<bool> ExistsAsync(int id);
 
         Task<AnimalDetailsServiceModel> AnimalDetailsByIdAsync(int id);
+
+        Task EditAsync(int animalId, AnimalFormModel model);
+
+        Task<bool> HasAgentWithIdAsync(int animalId, string userId);
+
+        Task<AnimalFormModel?> GetAnimalFormModelByIdAsync(int id);
     }
 }

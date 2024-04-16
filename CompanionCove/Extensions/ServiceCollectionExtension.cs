@@ -14,6 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<IAnimalService, AnimalService>();
             services.AddScoped<IAgentService, AgentService>();
+            services.AddScoped<IStatisticService, StatisticService>();
             return services;
         }
         public static IServiceCollection AddApplicationDbContext(this IServiceCollection services, IConfiguration config)

@@ -9,6 +9,7 @@
             <h6>(@(Model.IsAdopted ? "Adopted" : "Not Adopted"))</h6>
             <br />
             <a asp-controller="Animal" asp-action="Details" asp-route-id="@Model.Id"
+            asp-route-information="@Model.GetInformation()"
                class="btn btn-success">Details</a>
             @if (this.User.Identity.IsAuthenticated)
             {

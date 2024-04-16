@@ -1,9 +1,11 @@
 ﻿using CompanionCove.Attributes;
 using CompanionCove.Core.Contracts;
 using CompanionCove.Core.Exceptions;
+using CompanionCove.Core.Extensions;
 using CompanionCove.Core.Models.Animal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using System.Security.Claims;
 
 namespace CompanionCove.Controllers
@@ -53,13 +55,18 @@ namespace CompanionCove.Controllers
             return View(model);
         }
 		[HttpGet]
-		public async Task<IActionResult> Details(int id)
+		public async Task<IActionResult> Details(int id, string information)
 		{
             if(await animalService.ExistsAsync(id) == false)
             {
                 return BadRequest();
             }
 			var model = await animalService.AnimalDetailsByIdAsync(id);
+
+            if(information != model.GetInformation())
+            {
+                return BadRequest();
+            }
 			return View(model);
 		}
 		[HttpGet]
@@ -94,7 +101,7 @@ namespace CompanionCove.Controllers
 
             int newAnimalId = await animalService.CreateAsync(model, agentId ?? 0);
            
-            return RedirectToAction(nameof(Details), new {id = newAnimalId});
+            return RedirectToAction(nameof(Details), new {id = newAnimalId, information=model.GetInformation()});
         }
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -139,7 +146,7 @@ namespace CompanionCove.Controllers
 
             await animalService.EditAsync(id, model);
 
-            return RedirectToAction(nameof(Details), new { id});
+            return RedirectToAction(nameof(Details), new { id, information = model.GetInformation()});
 		}
 		[HttpGet]
 		public async Task<IActionResult> Delete(int id)

@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CompanionCove.Core.Contracts;
+using System.ComponentModel.DataAnnotations;
 using static CompanionCove.Core.Constants.MessageConstants;
 using static CompanionCove.Infrastructure.Constants.DataConstants;
 namespace CompanionCove.Core.Models.Animal
 {
-    public class AnimalFormModel
+    public class AnimalFormModel : IAnimalModel
 	{
 		[Required(ErrorMessage = RequiredMessage)]
 		[StringLength(MaxNameLength, MinimumLength = MinNameLength, ErrorMessage = LengthMessage)]

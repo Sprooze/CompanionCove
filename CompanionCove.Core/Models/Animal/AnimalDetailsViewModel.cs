@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompanionCove.Core.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CompanionCove.Core.Models.Animal
 {
-	public class AnimalDetailsViewModel
+	public class AnimalDetailsViewModel : IAnimalModel
 	{
 		public int Id { get; set; }
 

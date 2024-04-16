@@ -12,16 +12,24 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CompanionCove</a>
+                <div class="row align-items-center">
+                    <div class="col">
+                        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CompanionCove</a>
+                    </div>
+                    <div class="col-auto">
+                        <img src="https://cdn.discordapp.com/attachments/1229396817402269760/1229397498930663485/Logo_dog_and_cat.png?ex=662f88a4&is=661d13a4&hm=e60b296322c6d26e540e7ae8baca7d309775df02092de58c0b6a9dd289316e24&" alt="CompanionCove Logo" style="height: 30px; width: auto;">
+                    </div>
+                </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                   @await Component.InvokeAsync(nameof(MainMenuComponent))
+                    @await Component.InvokeAsync(nameof(MainMenuComponent))
                     <partial name="_LoginPartial" />
                 </div>
             </div>
+
         </nav>
     </header>
     <div class="container">

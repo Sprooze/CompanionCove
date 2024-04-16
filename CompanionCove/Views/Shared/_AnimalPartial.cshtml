@@ -1,5 +1,6 @@
 ﻿@model AnimalServiceModel
-
+@inject IAgentService agentService
+@inject IAnimalService animalService
 <div class="col-md-4">
     <div class="card mb-3">
         <img class="card-img-top" src="@Model.ImageUrl" alt="Animal Image">
@@ -13,19 +14,24 @@
                class="btn btn-success">Details</a>
             @if (this.User.Identity.IsAuthenticated)
             {
-                <a asp-controller="Animal" asp-action="Edit" asp-route-id="@Model.Id"
-                   class="btn btn-warning">Edit</a>
-                <a asp-controller="Animal" asp-action="Delete" asp-route-id="@Model.Id"
-                   class="btn btn-danger">Delete</a>
+                @if (await animalService.HasAgentWithIdAsync(Model.Id,User.Id()))
+                {
+                    <a asp-controller="Animal" asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-warning">Edit</a>
+                    <a asp-controller="Animal" asp-action="Delete" asp-route-id="@Model.Id"
+                       class="btn btn-danger">Delete</a>
+                }
+              
                 <p></p>
-                @if (!Model.IsAdopted)
+                @if (!Model.IsAdopted && await agentService.ExistsByIdAsync(User.Id()) == false)
                 {
                     <form class="input-group-sm" asp-controller="Animal"
                           asp-action="Adopt" asp-route-id="@Model.Id" method="post">
                         <input class="btn btn-primary" type="submit" value="Adopt" />
                     </form>
                 }
-                else
+                
+                else if (await animalService.IsAdoptedByUserWithIdAsync(Model.Id,User.Id()))
                 {
                     <form asp-controller="Animal" asp-action="Leave"
                           asp-route-id="@Model.Id" method="post">

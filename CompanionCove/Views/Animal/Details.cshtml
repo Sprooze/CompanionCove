@@ -1,5 +1,6 @@
 ﻿@model AnimalDetailsServiceModel
-
+@inject IAgentService agentService
+@inject IAnimalService animalService
 @{
     ViewBag.Title = "Animal Details";
 }
@@ -22,18 +23,22 @@
             <div class="form-inline">
                 @if (this.User.Identity.IsAuthenticated)
                 {
-                    <a class="btn btn-warning" asp-controller="Animal" asp-action="Edit"
-                       asp-route-id="@Model.Id">Edit</a>
-                    <a class="ml-2 btn btn-danger" asp-controller="Animal" asp-action="Delete"
-                       asp-route-id="@Model.Id">Delete</a>
-                    @if (!Model.IsAdopted)
+                    if (await animalService.HasAgentWithIdAsync(Model.Id, User.Id()))
+                    {
+                        <a class="btn btn-warning" asp-controller="Animal" asp-action="Edit"
+                           asp-route-id="@Model.Id">Edit</a>
+                        <a class="ml-2 btn btn-danger" asp-controller="Animal" asp-action="Delete"
+                           asp-route-id="@Model.Id">Delete</a>
+                    }
+
+                    @if (!Model.IsAdopted && (await agentService.ExistsByIdAsync(User.Id())) == false)
                     {
                         <form class="ml-2" asp-controller="Animal"
                               asp-action="Adopt" asp-route-id="@Model.Id" method="post">
                             <input class="btn btn-primary" type="submit" value="Adopt" />
                         </form>
                     }
-                    else
+                    else if(await animalService.IsAdoptedByUserWithIdAsync(Model.Id,User.Id()))
                     {
                         <form class="ml-2" asp-controller="Animal" asp-action="Leave"
                               asp-route-id="@Model.Id" method="post">

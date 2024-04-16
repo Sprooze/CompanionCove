@@ -1,5 +1,6 @@
 ﻿using CompanionCove.Core.Contracts;
 using CompanionCove.Core.Enumerations;
+using CompanionCove.Core.Exceptions;
 using CompanionCove.Core.Models.Animal;
 using CompanionCove.Core.Models.Home;
 using CompanionCove.Infrastructure.Data.Common;
@@ -112,7 +113,13 @@ namespace CompanionCove.Core.Services
             return animal.Id;
         }
 
-        public async Task EditAsync(int animalId, AnimalFormModel model)
+		public async Task DeleteAsync(int animalId)
+		{
+           await repository.DeleteAsync<Animal>(animalId);
+            await repository.SaveChangesAsync();
+		}
+
+		public async Task EditAsync(int animalId, AnimalFormModel model)
         {
             var animal = await repository.GetByIdAsync<Animal>(animalId);
 
@@ -159,6 +166,33 @@ namespace CompanionCove.Core.Services
             return await repository.AllReadOnly<Animal>().AnyAsync(x => x.Id == animalId && x.Agent.UserId == userId);
         }
 
+        public async Task<bool> IsAdoptedAsync(int animalId)
+        {
+            bool result = false;
+
+            var animal = await repository.GetByIdAsync<Animal>(animalId);
+
+            if(animal != null)
+            {
+                result =animal.GuardianId != null;
+            }
+            return result;
+
+        }
+
+        public async Task<bool> IsAdoptedByUserWithIdAsync(int animalId, string userId)
+        {
+            bool result = false;
+
+            var animal = await repository.GetByIdAsync<Animal>(animalId);
+                
+            if (animal != null)
+            {
+                result = animal.GuardianId == userId;
+            }
+            return result;
+        }
+
         public async Task<IEnumerable<AnimalIndexServiceModel>> LastThreeAnimalsAsync()
         {
             return await repository
@@ -173,11 +207,35 @@ namespace CompanionCove.Core.Services
                  }).ToListAsync();
         }
 
+        public async Task AdoptAsync(int id, string userId)
+        {
+            var animal = await repository.GetByIdAsync<Animal>(id);
+
+            if (animal != null)
+            {
+                 animal.GuardianId = userId;
+                await repository.SaveChangesAsync();
+            }
+        }
+
         public async Task<bool> TypeExistsAsync(int typeId)
         {
             return await repository.AllReadOnly<Infrastructure.Data.Models.Type>().AnyAsync(x => x.Id == typeId);
         }
 
-       
+        public async Task LeaveAsync(int animalId, string userId)
+        {
+            var animal = await repository.GetByIdAsync<Animal>(animalId);
+
+            if (animal != null)
+            {
+                if(animal.GuardianId != userId)
+                {
+                    throw new UnauthorizedActionException("The user is not the guardian");
+                }
+                animal.GuardianId = null;
+                await repository.SaveChangesAsync();
+            }
+        }
     }
 }

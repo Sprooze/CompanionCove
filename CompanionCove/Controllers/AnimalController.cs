@@ -1,5 +1,6 @@
 ﻿using CompanionCove.Attributes;
 using CompanionCove.Core.Contracts;
+using CompanionCove.Core.Exceptions;
 using CompanionCove.Core.Models.Animal;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,12 @@ namespace CompanionCove.Controllers
     {
         private readonly IAnimalService animalService;
         private readonly IAgentService agentService;
-        public AnimalController(IAnimalService _animalService, IAgentService _agentService)
+        private readonly ILogger logger;
+        public AnimalController(IAnimalService _animalService, IAgentService _agentService, ILogger<AnimalController> _logger)
         {
             animalService = _animalService;
             agentService = _agentService;
-
+            logger = _logger;
         }
         [AllowAnonymous]
 		[HttpGet]
@@ -142,26 +144,89 @@ namespace CompanionCove.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var model = new AnimalDetailsViewModel();
+			
+            if(await animalService.ExistsAsync(id) ==false)
+            {
+                return BadRequest();
+            }
 
+            if(await animalService.HasAgentWithIdAsync(id,User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+			
+            var animal = await animalService.AnimalDetailsByIdAsync(id);
+            
+            var model = new AnimalDetailsViewModel()
+            { 
+                Id = id,
+                Address = animal.Address,
+                ImageUrl = animal.ImageUrl,
+                Name = animal.Name
+            };
+
+           
 			return View(model);
 		}
 
 		[HttpPost]
 		public async Task<IActionResult> Delete(AnimalDetailsViewModel model)
 		{
+			if (await animalService.ExistsAsync(model.Id) == false)
+			{
+				return BadRequest();
+			}
+
+			if (await animalService.HasAgentWithIdAsync(model.Id, User.Id()) == false)
+			{
+				return Unauthorized();
+			}
+            await animalService.DeleteAsync(model.Id);
+
 			return RedirectToAction(nameof(All));
 		}
 
         [HttpPost]
         public async Task<IActionResult> Adopt(int id)
         {
-			return RedirectToAction(nameof(Mine));
+            if (await animalService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+            if(await agentService.ExistsByIdAsync(User.Id()))
+            {
+                return Unauthorized();
+            }
+            if(await animalService.IsAdoptedAsync(id))
+            {
+                return BadRequest();
+            }
+
+            await animalService.AdoptAsync(id, User.Id());
+            return RedirectToAction(nameof(All));
 		}
 		[HttpPost]
-		public async Task<IActionResult> Leave(int id)
+		public async Task<IActionResult> Leave(int id, string userId)
 		{
-			return RedirectToAction(nameof(Mine));
+            if (await animalService.ExistsAsync(id) == false)
+            {
+                return BadRequest();
+            }
+            if(await animalService.IsAdoptedByUserWithIdAsync(id, User.Id()) == false)
+            {
+                return Unauthorized();
+            }
+            try
+            {
+                await animalService.LeaveAsync(id, User.Id());
+            }
+            catch (UnauthorizedActionException uae)
+            {
+                logger.LogError(uae, "AnimalController/Leave");
+                return Unauthorized();
+            }
+            
+            return RedirectToAction(nameof(All));
 		}
 	}
 }

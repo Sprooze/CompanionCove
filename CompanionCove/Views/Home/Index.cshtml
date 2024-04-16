@@ -1,53 +1,13 @@
-﻿@model IEnumerable<AnimalIndexServiceModel>
-
-@{
-	ViewData["Title"] = "Home Page";
-	var animals = Model.ToList();
+﻿@{
+    ViewData["Title"] = "Home Page";
 }
 
+<div class="mb-5"></div>
 
-@if (!animals.Any())
-{
- <div class="mt-4 p-5 bg-light">
-		<h1 class="display-4">Find Your Furry Friend: Welcome to Companion Cove!</h1>
-		<p class="lead">
-			Currently empty, but hearts full of hope!
-			Want to make a difference? Add a furry friend here and spread love!
-		</p>
-		<hr class="my-4">
-		<p class="lead">
-			@if (User?.Identity?.IsAuthenticated == false)
-			{
-				<a asp-controller="Animal" asp-action="Add" class="btn btn-primary btn-lg" role="button">Add Animal</a>
-			}
-		</p>
-  </div>	  
-}
- <div class="mb-5"></div>
-
-<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-	<div class="carousel-inner">
-		@for(int i=0; i<animals.Count(); i++)
-		{
-			var animal = animals[i];
-			<div class="carousel-item @(i==0 ? "active" : string.Empty)">
-				<img class="d-block w-100" style="height:570px" src="@animal.ImageUrl" alt="@animal.Name">
-			 <div class="carousel-caption d-none d-md-block">
-				<h5>
-					<a class="btn btn-primary" asp-controller="Animal" asp-action="Details" 
-					asp-route-id="@animal.Id"> @animal.Name </a>
-				</h5>
-			 </div>
-			</div>
-		}
-	</div>
-	<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-		<span class="visually-hidden">Previous</span>
-	</button>
-	<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-		<span class="carousel-control-next-icon" aria-hidden="true"></span>
-		<span class="visually-hidden">Next</span>
-	</button>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <img class="img-fluid" style="width: 600px; height: 550px;" src="https://cdn.dribbble.com/users/1961390/screenshots/4205661/comp-1_1.gif" alt="HomePageGif">
+        </div>
+    </div>
 </div>
-

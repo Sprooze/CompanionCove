@@ -1,8 +1,61 @@
-﻿@model AnimalDetailsViewModel
+﻿@model AnimalDetailsServiceModel
+@inject IAgentService agentService
+@inject IAnimalService animalService
 @{
-	ViewData["Title"] = "Animal Details";
+    ViewBag.Title = "Animal Details";
 }
 
-
-<h2 class="text-center">@ViewData["Title"]</h2>
+<h2 class="text-center">@ViewBag.Title</h2>
 <hr />
+
+<div class="container" style="display:inline">
+    <div class="row">
+        <div class="col-4">
+            <img class="card-img-top" style="width: 20rem;"
+                 src="@Model.ImageUrl" alt="Animal Image">
+        </div>
+        <div class="card col-8 border-0">
+            <p style="font-size:25px;"><u>@Model.Name</u></p>
+            <p>Located in: <b>@Model.Address</b></p>
+            <p>@Model.Description</p>
+            <p>Type: <b>@Model.Type</b></p>
+            <p><i>(@(Model.IsAdopted ? "Adopted" : "Not Adopted"))</i></p>
+            <div class="form-inline">
+                @if (this.User.Identity.IsAuthenticated)
+                {
+                    if (await animalService.HasAgentWithIdAsync(Model.Id, User.Id()))
+                    {
+                        <a class="btn btn-warning" asp-controller="Animal" asp-action="Edit"
+                           asp-route-id="@Model.Id">Edit</a>
+                        <a class="ml-2 btn btn-danger" asp-controller="Animal" asp-action="Delete"
+                           asp-route-id="@Model.Id">Delete</a>
+                    }
+
+                    @if (!Model.IsAdopted && (await agentService.ExistsByIdAsync(User.Id())) == false)
+                    {
+                        <form class="ml-2" asp-controller="Animal"
+                              asp-action="Adopt" asp-route-id="@Model.Id" method="post">
+                            <input class="btn btn-primary" type="submit" value="Adopt" />
+                        </form>
+                    }
+                    else if(await animalService.IsAdoptedByUserWithIdAsync(Model.Id,User.Id()))
+                    {
+                        <form class="ml-2" asp-controller="Animal" asp-action="Leave"
+                              asp-route-id="@Model.Id" method="post">
+                            <input class="btn btn-primary" type="submit" value="Leave" />
+                        </form>
+                    }
+                }
+            </div>
+            <p></p>
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Agent Info</h5>
+                    <p class="card-text">Full Name:  @Model.Agent.FullName</p>
+                    <p class="card-text">Email:  @Model.Agent.Email</p>
+                    <p class="card-text">Phone Number: @Model.Agent.PhoneNumber</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

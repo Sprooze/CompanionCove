@@ -1,9 +1,46 @@
-﻿@model IndexViewModel
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="mb-5"></div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="mb-3">
+                <h2>Welcome to CompanionCove!</h2>
+                <p>You can find your best bud here!</p>
+            </div>
+            <img class="img-fluid" style="width: 500px; height: 450px;" src="https://cdn.dribbble.com/users/1961390/screenshots/4205661/comp-1_1.gif" alt="HomePageGif">
+        </div>
+    </div>
 </div>
+
+<div class="mb-5"></div>
+
+<div class="row">
+    <div class="col-12 text-center">
+        <button class="btn btn-primary" id="statistics-button">Show Statistics</button>
+    </div>
+</div>
+
+<div class="mt-4 p-5 bg-light d-none" id="statistics">
+    <div class="row">
+        <h2 class="col-md-2 text-center" id="total-animals"></h2>
+        <h2 class="col-md-2 text-center" id="total-adoptions"></h2>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $('#statistics-button').on('click', ev => {
+            $.get('/api/statistic', data => {
+                $('#total-animals').text(data.totalAnimals + ' Animals');
+                $('#total-adoptions').text(data.totalAdoptions + ' Adoptions');
+                $('#statistics').removeClass('d-none');
+                $('#statistics-button').hide();
+            });
+        });
+    </script>
+}

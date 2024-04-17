@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompanionCove.Infrastructure.Data
 {
-    public class CompanionCoveDbContext : IdentityDbContext
+    public class CompanionCoveDbContext : IdentityDbContext<ApplicationUser>
     {
         public CompanionCoveDbContext(DbContextOptions<CompanionCoveDbContext> options)
             : base(options)

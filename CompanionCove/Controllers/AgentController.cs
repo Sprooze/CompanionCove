@@ -1,23 +1,48 @@
-﻿using CompanionCove.Core.Models.Agent;
-using Microsoft.AspNetCore.Authorization;
+﻿using CompanionCove.Attributes;
+using CompanionCove.Core.Contracts;
+using CompanionCove.Core.Models.Agent;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Security.Claims;
+using static CompanionCove.Core.Constants.MessageConstants;
 namespace CompanionCove.Controllers
 {
-	[Authorize]
-	public class AgentController : Controller
+	public class AgentController : BaseController
 	{
-		[HttpGet]
-		public async Task<IActionResult> Become()
+		private readonly IAgentService agentService;
+
+        public AgentController(IAgentService _agentService)
+        {
+				agentService = _agentService;
+        }
+        [HttpGet]
+		[NotAgent]
+		public IActionResult Become()
 		{
-			var model = new BecomeAgentFormModel();
+			
+		var model = new BecomeAgentFormModel();
 
 			return View(model);
 		}
 		[HttpPost]
+		[NotAgent]
 		public async Task<IActionResult> Become(BecomeAgentFormModel model)
 		{
-			return RedirectToAction(nameof(AnimalController.All), "Animal");
+			if(await agentService.UserWithPhoneNumberExistsAsync(model.PhoneNumber))
+			{
+				ModelState.AddModelError(nameof(model.PhoneNumber), PhoneExists);
+			}
+
+			if(await agentService.UserIsAGuardianAsync(User.Id()))
+			{
+				ModelState.AddModelError("Error", IsGuardian);
+			}
+			if (ModelState.IsValid == false)
+			{
+				return  View(model);
+			}
+
+			await agentService.CreateAsync(User.Id(), model.PhoneNumber);
+			return  RedirectToAction(nameof(AnimalController.All), "Animal");
 		}
 	}
 }

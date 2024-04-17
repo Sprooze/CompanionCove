@@ -9,7 +9,9 @@ namespace CompanionCove.Core.Models.Agent
 {
 	public class AgentServiceModel
 	{
-		[Display(Name ="Phone Number")]
+		[Display(Name ="Full Name")] 
+        public string FullName { get; set; } = null!;
+        [Display(Name ="Phone Number")]
 		public string PhoneNumber { get; set; } = null!;
 
 		public string Email { get; set; } = null!;

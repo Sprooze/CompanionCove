@@ -85,6 +85,7 @@ namespace CompanionCove.Core.Services
                 Address = x.Address,
                 Agent = new Models.Agent.AgentServiceModel()
                 {
+                    FullName = $"{x.Agent.User.FirstName} {x.Agent.User.LastName}",
                     Email = x.Agent.User.Email,
                     PhoneNumber = x.Agent.PhoneNumber
                 },

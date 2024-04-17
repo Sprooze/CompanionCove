@@ -10,5 +10,9 @@
         public const int MinDescriptionLength = 10;
         public const int MaxAgentPhoneLength = 15;
         public const int MinAgentPhoneLength = 7;
+        public const int MaxUserFirstNameLength = 20;
+        public const int MinUserFirstNameLength = 1;
+        public const int MaxUserLastNameLength = 25;
+        public const int MinUserLastNameLength = 3;
     }
 }
